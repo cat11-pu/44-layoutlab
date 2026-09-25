@@ -7,6 +7,12 @@ import { render } from "./app.js";
 const __lines = [];
 function emit(label, value) { __lines.push([String(label).replace(/ =$/, ""), value]); }
 
+// 结构化值以 JSON 文本收进来，比对前解码回对象；普通字符串（错误码等）原样保留。
+function collected(value) {
+  if (typeof value !== "string") return value;
+  try { return JSON.parse(value); } catch (_) { return value; }
+}
+
 
 const spec = JSON.parse(fs.readFileSync(process.argv[2] || "sample/layout.json", "utf8"));
 const base = layout(spec.nodes, spec.edges || []);
@@ -72,7 +78,7 @@ let __bad = 0;
 for (const [label, want] of Object.entries(EXPECTED)) {
   const found = __lines.find((pair) => pair[0] === label);
   if (!found) { __bad += 1; console.log("缺失验收项 " + label); continue; }
-  const got = found[1];
+  const got = collected(found[1]);
   if (JSON.stringify(got) === JSON.stringify(want)) { console.log("一致 " + label + " = " + JSON.stringify(got)); }
   else { __bad += 1; console.log("不一致 " + label + " 期望 " + JSON.stringify(want) + " 实际 " + JSON.stringify(got)); }
 }
