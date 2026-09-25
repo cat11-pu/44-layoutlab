@@ -13,10 +13,10 @@ const base = layout(spec.nodes, spec.edges || []);
 const grown = addEdges(spec.nodes, spec.edges || [], spec.added_edges || [], base.positions);
 const view = render(spec);
 
-emit("每个节点的坐标 =", JSON.stringify(base.positions));
-emit("每层节点 =", JSON.stringify(base.layers));
+emit("每个节点的坐标 =", base.positions);
+emit("每层节点 =", base.layers);
 emit("交叉数 =", base.crossings);
-emit("重排的节点 =", JSON.stringify(grown.moved));
+emit("重排的节点 =", grown.moved);
 emit("增量是否与全量一致 =", view.consistent);
 emit("预算消耗 =", view.budget_used);
 emit("自环的错误码 =", spec.self_loop_code);
