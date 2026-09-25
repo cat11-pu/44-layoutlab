@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><title>layoutlab</title>
+<style>body{font-family:system-ui,sans-serif;margin:24px;max-width:960px}
+textarea{width:100%;height:150px;font-family:ui-monospace,monospace}
+button{padding:6px 12px;margin:8px 8px 8px 0}pre{background:#f6f6f6;padding:10px;border-radius:6px;overflow:auto}
+.ok{color:#0a7}.bad{color:#c00}</style>
+</head>
+<body>
+<h1>layoutlab 工作台</h1>
+<p>改样例里的节点、边与新增边再点运行，结果给坐标、重排的节点与增量是否与全量一致。</p>
+<textarea id="input">{
+  "self_loop_code": "E_SELF_LOOP",
+  "nodes": [{"id": "n0"}, {"id": "n1"}, {"id": "n2"}, {"id": "n3"}],
+  "edges": [[0, 1], [0, 2], [1, 3]],
+  "added_edges": [[2, 3]]
+}</textarea>
+<div><button id="run">运行</button><span id="status" class="ok">等待</span></div>
+<pre id="out">还没跑</pre>
+<script type="module">
+import { render } from "./app.js";
+
+document.getElementById("run").addEventListener("click", function () {
+  const status = document.getElementById("status");
+  try {
+    const spec = JSON.parse(document.getElementById("input").value);
+    const result = render(spec);
+    status.className = "ok";
+    status.textContent = "完成";
+    document.getElementById("out").textContent = JSON.stringify(result, null, 1);
+  } catch (error) {
+    status.className = "bad";
+    status.textContent = "出错 " + error.message;
+    document.getElementById("out").textContent = String(error && error.stack ? error.stack : error);
+  }
+});
+</script>
+</body>
+</html>
